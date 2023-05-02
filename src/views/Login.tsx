@@ -4,6 +4,7 @@ import key from "../assets/images/key.svg";
 import { PublicInput } from "../components/general/PublicInput";
 import { useState } from "react";
 import { LoginServices } from "../services/LoginService";
+import { Link, useSearchParams } from "react-router-dom";
 
 const loginServices = new LoginServices();
 
@@ -13,33 +14,42 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [searchParams] = useSearchParams();
+  const success = searchParams.get('success');
+
   const doLogin = async () => {
     try {
-      setError('')
+      setError("");
 
-      if(!login || login.trim().length < 5 || !password || password.trim().length < 4){
-        return setError('Favor preencher os campos corretamente')
-      };
+      if (
+        !login ||
+        login.trim().length < 5 ||
+        !password ||
+        password.trim().length < 4
+      ) {
+        return setError("Favor preencher os campos corretamente");
+      }
 
       setLoading(true);
 
-      await loginServices.login({login, password});
-      setLoading(false);      
-    } catch (error: any) {
-      console.log('Erro ao efetuar o login:', error);
+      await loginServices.login({ login, password });
       setLoading(false);
-      if(error?.response?.data?.message){
-        return setError(error?.response?.data?.message)
+    } catch (error: any) {
+      console.log("Erro ao efetuar o login:", error);
+      setLoading(false);
+      if (error?.response?.data?.message) {
+        return setError(error?.response?.data?.message);
       }
-      return setError('Erro ao efetuar login, tente novamente')
+      return setError("Erro ao efetuar login, tente novamente");
     }
-  }
+  };
 
   return (
     <div className="container-public">
       <img src={logo} alt="logo devameet" className="logo" />
       <form>
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">Cadastro efetuado com sucesso, faça seu login</p>}
         <PublicInput
           icon={mail}
           alt="Email"
@@ -57,10 +67,12 @@ const Login = () => {
           setValue={setPassword}
         />
 
-        <button type="button" onClick={doLogin} disabled={loading}>{loading? "...Carregando" : "Login"}</button>
+        <button type="button" onClick={doLogin} disabled={loading}>
+          {loading ? "...Carregando" : "Login"}
+        </button>
         <div className="link">
           <p>Não possui uma conta?</p>
-          <a href="#">Faça seu cadastro agora!</a>
+          <Link to="/register">Faça seu cadastro agora!</Link>
         </div>
       </form>
     </div>

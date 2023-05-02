@@ -13,6 +13,13 @@
     max-width: 228px;
   }
 
+  &.register {
+    
+    .logo {
+      display: none;
+    }
+  }
+
   p {
     text-align: center;
     font-family: $fontRegular;
@@ -22,7 +29,8 @@
       color: $error;
     }
 
-    &.sucess {
+    &.success {
+      font-weight: 600;
       color: $primaryColor;
     }
   }
@@ -93,6 +101,13 @@
     justify-content: space-evenly;
     align-items: center;
 
+    &.register {
+      padding-top: 56px;
+      padding-bottom: 56px;
+      .logo{
+        display: block;
+      }
+    }
     .logo {
       max-width: 600px;
       height: 20%;

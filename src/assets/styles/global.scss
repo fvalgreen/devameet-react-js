@@ -90,7 +90,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid $primaryColor;
+  border: 3px solid $primaryColor;
 
   img {
     border-radius: 50%;
@@ -132,9 +132,11 @@ body {
     background: $primaryColorWithOpacity;
   }
   &::-webkit-scrollbar-thumb {
-    background: $primaryColorWithOpacity;
+    background: $primaryColor;
     border-radius: 8px;
   }
 }
 
 @import './public.scss';
+@import './avatarInput.scss';
+@import './modal.scss';
