@@ -94,8 +94,8 @@ button {
 
   img {
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 115px;
+    height: 115px;
     object-fit: contain;
   }
 
@@ -140,3 +140,4 @@ body {
 @import './public.scss';
 @import './avatarInput.scss';
 @import './modal.scss';
+@import './header.scss';

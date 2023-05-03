@@ -2,9 +2,10 @@ import logo from "../assets/images/logo.svg";
 import mail from "../assets/images/mail.svg";
 import key from "../assets/images/key.svg";
 import { PublicInput } from "../components/general/PublicInput";
-import { useState } from "react";
+import { useContext ,useState } from "react";
 import { LoginServices } from "../services/LoginService";
 import { Link, useSearchParams } from "react-router-dom";
+import { AuthorizeContext } from "../App";
 
 const loginServices = new LoginServices();
 
@@ -16,6 +17,8 @@ const Login = () => {
 
   const [searchParams] = useSearchParams();
   const success = searchParams.get('success');
+
+  const {setToken} = useContext(AuthorizeContext)
 
   const doLogin = async () => {
     try {
@@ -32,8 +35,9 @@ const Login = () => {
 
       setLoading(true);
 
-      await loginServices.login({ login, password });
+      await loginServices.login({ login, password }, setToken);
       setLoading(false);
+      
     } catch (error: any) {
       console.log("Erro ao efetuar o login:", error);
       setLoading(false);
