@@ -1,12 +1,12 @@
 import { Footer } from "../components/general/Footer";
 import { Header } from "../components/general/Header";
-import { MeetHome } from "../components/meet/MeetHome";
+import { MeetAdd } from "../components/meet/MeetAdd";
 
-export const Home = () => {
+export const MeetAddView = () => {
   return (
     <>
       <Header />
-      <MeetHome />
+      <MeetAdd />
       <Footer />
     </>
   );
