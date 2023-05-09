@@ -93,6 +93,26 @@
           font-weight: 600;
         }
       }
+
+      .container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        span {
+          font-size: 18px;
+          line-height: 120%;
+          font-family: $fontBold;
+          margin-bottom: 8px;
+        }
+        p {
+          font-family: $fontLight;
+          font-size: 16px;
+          line-height: 24px;
+        }
+      }
     }
   }
 
