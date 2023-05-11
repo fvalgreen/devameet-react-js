@@ -1,12 +1,15 @@
 import trashIcon from "../../assets/images/trashObject.svg";
 import arrowRightIcon from "../../assets/images/rotateRight.svg";
 import arrowLeftIcon from "../../assets/images/rotateLeft.svg";
+import { useEffect } from "react";
 
 type MeetObjectsRoomType = {
   objects?: [];
   selected?: any;
   setSelected?(s: any): void;
   removeObject?(o: any): void;
+  rotateObject?(o: any, to: string): void;
+  moveSelected?(event: any, selected: any): void;
 };
 
 export const MeetObjectsRoom: React.FC<MeetObjectsRoomType> = ({
@@ -14,9 +17,23 @@ export const MeetObjectsRoom: React.FC<MeetObjectsRoomType> = ({
   selected,
   setSelected,
   removeObject,
+  rotateObject,
+  moveSelected
 }) => {
+  useEffect(() => {
+    const doMove = (event: any) => {
+      moveSelected!!(event, selected);
+    }
+
+    document.removeEventListener('keyup', doMove);
+    document.addEventListener('keyup', doMove);
+    return () => {
+      document.removeEventListener('keyup', doMove);
+    }
+  },[selected])
+
   const getImageFromObject = (object: any) => {
-    if (object && object.id) {
+    if (object && object._id) {
       const path = `../../assets/objects/${object?.type}/${object?.name}${
         object.orientation ? "_" + object.orientation : ""
       }.png`;
@@ -126,7 +143,7 @@ export const MeetObjectsRoom: React.FC<MeetObjectsRoomType> = ({
         break;
     }
 
-    if (object.name === selected?.name) {
+    if (object._id === selected?._id) {
       style += " selected";
     }
     return style;
@@ -164,17 +181,37 @@ export const MeetObjectsRoom: React.FC<MeetObjectsRoomType> = ({
           ))}
         </div>
         <div className="actions">
-          <div className={selected?.id ? " active" : ""}>
+          <div className={selected?._id ? " active" : ""}>
             <img
               src={trashIcon}
-              onClick={() => (selected?.id ? removeObject!!(selected) : null)}
+              onClick={() => (selected?._id ? removeObject!!(selected) : null)}
             />
           </div>
-          <div>
-            <img src={arrowRightIcon} />
+          <div
+            className={
+              selected?._id &&
+              (selected?.type === "chair" || selected?.type === "couch")
+                ? " active"
+                : ""
+            }
+          >
+            <img
+              src={arrowRightIcon}
+              onClick={() => (selected?._id ? rotateObject!!(selected, 'right') : null)}
+            />
           </div>
-          <div>
-            <img src={arrowLeftIcon} />
+          <div
+            className={
+              selected?._id &&
+              (selected?.type === "chair" || selected?.type === "couch")
+                ? " active"
+                : ""
+            }
+          >
+            <img
+              src={arrowLeftIcon}
+              onClick={() => (selected?._id ? rotateObject!!(selected, 'left') : null)}
+            />
           </div>
         </div>
       </div>

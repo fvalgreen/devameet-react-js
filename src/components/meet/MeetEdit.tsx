@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MeetEditHeader } from "./MeetEditHeader";
 import { MeetObjectPicker } from "./MeetObjectPicker";
 import wallIcon from "../../assets/images/wall.svg";
@@ -11,19 +11,61 @@ import decorIcon from "../../assets/images/decoration.svg";
 import natureIcon from "../../assets/images/plant.svg";
 import objectJSON from "../../assets/objects/objects.json";
 import { MeetObjectsRoom } from "./MeetObjectsRoom";
+import { useNavigate, useParams } from "react-router-dom";
+import { MeetServices } from "../../services/MeetServices";
+
+const meetService = new MeetServices();
 
 export const MeetEdit = () => {
   const [index, setIndex] = useState(0);
+  const [id, setId] = useState('');
   const [color, setColor] = useState("");
   const [name, setName] = useState("");
   const [selected, setSelected] = useState<any>({});
   const [objects, setObjects] = useState<any>([]);
 
-  const isFormInvalid = true;
+  const isFormInvalid = !id || id.trim().length < 5 ||!name || name.trim().length < 5 || !color || color.trim().length < 4;
+
+  const navigate = useNavigate()
+
+  const {meetId} = useParams();
+
+  const getMeet = async () => {
+    if(!meetId){
+      return navigate('/');
+    };
+    
+    const result = await meetService.getMeetById(meetId);
+    
+    if(!result?.data){
+      return navigate('/');
+    }
+    
+    const {_id, name, color} = result.data;
+
+    setId(_id);
+    setName(name);
+    setColor(color);
+
+    const objectsResult = await meetService.getMeetObjectsById(meetId);
+    
+    if(objectsResult?.data){
+      const newObjects = objectsResult?.data?.map((o: any) => {
+        return {...o, type: o?.name?.split('_')[0]}
+      });
+      setObjects(newObjects);
+    }
+
+  }
+
+  useEffect(() => {
+    getMeet();
+  },[])
+
 
   const setObject = (object: any) => {
     const newIndex = index + 1;
-    object.id = newIndex;
+    object._id = newIndex;
     setIndex(newIndex);
 
     if (object.selectMultiple === true) {
@@ -39,12 +81,128 @@ export const MeetEdit = () => {
   };
 
   const removeObject = (object: any) => {
-    console.log(object)
-    const filtered = objects.filter((o: any) => o.id !== object.id);
+    const filtered = objects.filter((o: any) => o._id !== object._id);
     setObjects(filtered);
-    setSelected(null)
+    setSelected(null);
+  };
+
+  const rotateObject = (object: any, to: string) => {
+    if (object?._id && (object?.type === "chair" || object?.type === "couch")) {
+      const index = objects?.indexOf(object);
+      if (to === "left") {
+        switch (object.orientation) {
+          case "left": {
+            object.orientation = "front";
+            break;
+          }
+          case "front": {
+            object.orientation = "right";
+            break;
+          }
+          case "right": {
+            object.orientation = "back";
+            break;
+          }
+          case "back": {
+            object.orientation = "left";
+            break;
+          }
+          default:
+            break;
+        }
+      } else if (to === "right") {
+        switch (object.orientation) {
+          case "left": {
+            object.orientation = "back";
+            break;
+          }
+          case "back": {
+            object.orientation = "right";
+            break;
+          }
+          case "right": {
+            object.orientation = "front";
+            break;
+          }
+          case "front": {
+            object.orientation = "left";
+            break;
+          }
+          default:
+            break;
+        }
+      }
+      setSelected(object);
+      objects[index] = object;
+      const newArray = [...objects];
+      setObjects(newArray);
+    }
+  };
+
+  const moveSelected = (event: any, selected: any) => {
+    if(selected && selected._id && selected.type !== 'floor' && selected.type !== 'wall'){
+      const index = objects?.indexOf(selected);
+
+      switch (event?.key) {
+        case "ArrowUp": {
+          selected.y = selected.y > 1 ? selected.y - 1 : 1;
+          break;
+        }
+        case "ArrowDown": {
+          selected.y = selected.y < 6 ? selected.y + 1 : 6;
+          break;
+        }
+        case "ArrowLeft": {
+          selected.x = selected.x > 0 ? selected.x - 1 : 0;
+          break;
+        }
+        case "ArrowRight": {
+          selected.x = selected.x < 7 ? selected.x + 1 : 7;
+          break;
+        }
+  
+        default:
+          break;
+      }
+      setSelected(selected);
+      objects[index] = selected;
+      const newArray = [...objects];
+      setObjects(newArray);
+
+    }
+  };
+
+  const goBack = () => {
+    return navigate(-1);
+  };
+
+  const doUpdate = async () => {
+    try {
+      if (isFormInvalid) {
+        return;
+      }
+
+      const body = {
+        name,
+        color,
+        objects
+      }
+
+      await meetService.updateMeet(body, id);
+      return navigate('/');
+    } catch (error: any) {
+      if (error?.response.data?.message) {
+        console.log(
+          "Houve um erro ao editar a reunião: ",
+          error?.response.data?.messag
+        );
+      } else {
+        console.log("Houve um erro ao editar a reunião: ", error);
+      }
+    }
   }
 
+  console.log(objects)
 
   return (
     <div className="container-principal">
@@ -115,11 +273,23 @@ export const MeetEdit = () => {
           />
         </div>
         <div className="form">
-          <span>Voltar</span>
-          <button className={isFormInvalid ? "disabled" : ""}>Salvar</button>
+          <span onClick={goBack}>Voltar</span>
+          <button 
+            className={isFormInvalid ? "disabled" : ""}
+            disabled={isFormInvalid}
+            onClick={doUpdate}
+          >
+              Salvar</button>
         </div>
       </div>
-      <MeetObjectsRoom objects={objects} selected={selected} setSelected={setSelected} removeObject={removeObject}/>
+      <MeetObjectsRoom
+        objects={objects}
+        selected={selected}
+        setSelected={setSelected}
+        removeObject={removeObject}
+        rotateObject={rotateObject}
+        moveSelected={moveSelected}
+      />
     </div>
   );
 };
