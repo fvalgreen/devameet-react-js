@@ -47,6 +47,7 @@ export const MeetAdd = () => {
           name={name}
           setColor={setColor}
           setName={setName}
+          isEdit={false}
         />
         <div className="form">
           <span onClick={goBack}>Voltar</span>
