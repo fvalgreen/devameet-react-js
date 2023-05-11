@@ -8,7 +8,7 @@ type MeetObjectPickerType = {
   label: string;
   asset: any;
   selected: string;
-  setObject(s:string):void;
+  setObject(s:any):void;
 };
 
 export const MeetObjectPicker: React.FC<MeetObjectPickerType> = ({
@@ -31,7 +31,17 @@ export const MeetObjectPicker: React.FC<MeetObjectPickerType> = ({
   };
 
   const selectObject = (object: string) => {
-    setObject(object);
+    const objectFinal = {
+      name: object,
+      x: asset.defaultXPosition,
+      y: asset.defaultYPosition,
+      zIndex: asset.defaultZIndex,
+      orientation: asset.canRotate? 'front' : '',
+      type: asset.path,
+      flexStart: asset.flexStart,
+      selectMultiple: asset.selectMultiple
+    }
+    setObject(objectFinal);
   }
   return (
     <div className="container-object-picker">
@@ -43,7 +53,7 @@ export const MeetObjectPicker: React.FC<MeetObjectPickerType> = ({
       {show && (
         <div className="objects" >
           {asset?.objects?.map((object: any) => (
-            <div className={object === selected ? 'selected' : ''} onClick={() => selectObject(object)}>
+            <div key={object} className={object === selected ? 'selected' : ''} onClick={() => selectObject(object)}>
               <img
                 className={
                   "object " +

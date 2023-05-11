@@ -76,6 +76,7 @@ export const MeetEditHeader: React.FC<MeetEditHeaderProps> = ({
               <div className="colors">
                 {colors.map((c) => (
                   <div
+                    key={c}
                     className={c === selected ? 'selected' : ''}
                     onClick={() => setSelected(c)}
                     style={{ backgroundColor: c }}
