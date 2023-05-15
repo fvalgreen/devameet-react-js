@@ -158,6 +158,31 @@
           
         }
 
+        .preview{
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          z-index: 70;
+          background-color: $greyColor3WithOpacity;
+
+          img{
+            position: relative;
+            margin-bottom: 3%;
+            cursor: auto;
+          }
+
+          button {
+            width: 35%;
+            border: 2px solid white;
+            background-color: transparent;
+
+          }
+        }
+
       }
 
       .actions{
@@ -176,11 +201,7 @@
             background-color: $primaryColor;
             cursor: pointer;
           }
-
-          img {
-
-          }
-        }
+        }          
       }
     }
   }
