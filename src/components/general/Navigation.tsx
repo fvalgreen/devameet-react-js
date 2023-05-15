@@ -25,12 +25,12 @@ export const Navigation = () => {
   const getIcon = (name: string) => {
     switch (name) {
       case 'home':
-        if(location.pathname !== '/user' && location.pathname !== '/link' && location.pathname !== '/room'){
+        if(location.pathname !== '/user' && location.pathname !== '/link' && !location.pathname.includes('/room')){
           return homeBlue;
         }
         return homeGrey;      
       case 'room':
-        if(location.pathname === '/room' || location.pathname === '/link'){
+        if(location.pathname.includes('/room') || location.pathname === '/link'){
           return doorBlue;
         }
         return doorGrey;      

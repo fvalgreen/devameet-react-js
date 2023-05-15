@@ -54,4 +54,7 @@
       }
     }
   }
+  @media screen and (min-width: $desktopBreakpoint) {
+    background-color: white;
+  }
 }
