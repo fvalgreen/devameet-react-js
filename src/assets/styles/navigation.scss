@@ -1,6 +1,7 @@
 @import './configs.scss';
 
 .container-navigation {  
+  background-color: $primaryColorWithOpacity;
   ul {
     display: flex;
     justify-content: space-around;
