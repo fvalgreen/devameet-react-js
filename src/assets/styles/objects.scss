@@ -4,6 +4,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  margin-top: 20px;
 
   .center {
     display: flex;
@@ -178,6 +179,83 @@
           font-size: 12px;
 
         }
+      }
+      .user-avatar{
+        position: absolute;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        div{
+          background-color: $greyColor3;
+          border: 1.5px solid $primaryColor4;
+          border-radius: 20px;
+          margin-bottom: 10px;
+          padding: 2px 8px;
+
+          span{
+            color: $primaryColor4;
+            font-weight: 500;
+            line-height: 20px;
+          }
+        }
+        img{
+          position: relative;
+          
+        }
+        &.row-zero {
+            top: -6%;
+          }
+          
+          &.row-one {
+            top: 6%;
+          }
+          &.row-two {
+            top: 18%;
+          }
+          &.row-three {
+            top: 30%;
+          }
+          &.row-four {
+            top: 42%;
+          }
+          &.row-five {
+            top: 54%;
+          }
+          &.row-six {
+            top: 66%;
+          }
+          &.row-seven {
+            top: 78%;
+          }
+  
+          &.column-zero{
+            left: 2.5%;
+          }
+  
+          &.column-one {
+            left: 14%;
+          }
+          &.column-two {
+            left: 26.5%;
+          }
+          &.column-three {
+            left: 38.5%;
+          }
+          &.column-four {
+            left: 50.5%;
+          }
+          &.column-five {
+            left: 62.5%;
+          }
+          &.column-six {
+            left: 75.5%;
+          }
+          &.column-seven {
+            left: 89.5%;
+          }
       }
 
     }

@@ -121,6 +121,8 @@ button {
 }
 
 body {
+  background-color: white;
+  background-image: none;
   @media screen and (min-width: $desktopBreakpoint) {
     background-color: $primaryColorWithOpacity;
     background-size: cover;

@@ -1,34 +1,46 @@
-import enterRoomIcon from '../../assets/images/enterRoom.svg';
-import {useState} from "react";
+import enterRoomIcon from "../../assets/images/enterRoom.svg";
+import { useState } from "react";
 
 type RoomObjectsProps = {
-  objects: Array<any>,
-  enterRoom():void
+  objects: Array<any>;
+  connectedUsers: Array<any>;
+  me: any;
+  enterRoom(): void;
+};
 
-}
-
-export const RoomObjects: React.FC<RoomObjectsProps> = ({objects, enterRoom}) => {
-
+export const RoomObjects: React.FC<RoomObjectsProps> = ({
+  objects,
+  enterRoom,
+  connectedUsers,
+  me,
+}) => {
   const [objectsWithWidth, setObjectsWithWidth] = useState<Array<any>>([]);
   const mobile = window.innerWidth <= 992;
 
-  const getImageFromObject = (object: any) => {
+  const getImageFromObject = (object: any, isAvatar: boolean) => {
     if (object && object._id) {
-      const path = `../../assets/objects/${object?.type}/${object?.name}${
+      const path = `../../assets/objects/${
+        isAvatar ? "avatar" : object?.type
+      }/${isAvatar ? object.avatar : object?.name}${
         object.orientation ? "_" + object.orientation : ""
       }.png`;
       const imgUrl = new URL(path, import.meta.url);
 
-      if(mobile){
+      if (mobile) {
         let image = new Image();
         image.onload = () => {
-          const exist = objectsWithWidth.find((o:any) => o.name == object.name);
-          if(!exist){
-            const newObjects = [...objectsWithWidth, {name: object.name, width: image.width}];
+          const exist = objectsWithWidth.find(
+            (o: any) => o.name == object.name
+          );
+          if (!exist) {
+            const newObjects = [
+              ...objectsWithWidth,
+              { name: object.name, width: image.width },
+            ];
             setObjectsWithWidth(newObjects);
           }
-        }
-         image.src = imgUrl.href;
+        };
+        image.src = imgUrl.href;
       }
 
       return imgUrl.href;
@@ -135,41 +147,64 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({objects, enterRoom}) =>
       default:
         break;
     }
-    
+
     return style;
   };
 
   const getObjectStyle = (object: any) => {
     let style = {} as any;
-    if(mobile){
-      const obj = objectsWithWidth.find((o:any) => o.name == object.name);
-      if(obj){
+    if (mobile) {
+      const obj = objectsWithWidth.find((o: any) => o.name == object.name);
+      if (obj) {
         const width = obj.width * 0.5;
         style.width = width + "px";
       }
     }
-    console.log(style)
     return style;
-  }
+  };
+
+  const getName = (user: any) => {
+    if (user?.name) {
+      return user.name.split(" ")[0];
+    }
+    return "";
+  };
 
   return (
     <div className="container-grid">
       <div className="center">
-        <div className="grid">          
+        <div className="grid">
           {objects?.map((object: any) => (
-            <img              
+            <img
               key={object._id}
-              src={getImageFromObject(object)}
+              src={getImageFromObject(object, false)}
               className={getClassFromObject(object)}
               style={getObjectStyle(object)}
             />
           ))}
-          <div className="preview">
-            <img src={enterRoomIcon} alt='entrar na sala'/>
-            <button onClick={enterRoom}>Entrar na Sala</button>
-          </div>
-        </div>        
+          {connectedUsers?.map((user: any) => (
+            <div
+              className={"user-avatar " + getClassFromObject(user)}
+              key={user._id}
+            >
+              <div>
+                <span>{getName(user)}</span>
+              </div>
+              <img
+                src={getImageFromObject(user, true)}
+                style={getObjectStyle(user)}
+                alt="avatar"
+              />
+            </div>
+          ))}
+          {(!connectedUsers || connectedUsers?.length === 0) && (
+            <div className="preview">
+              <img src={enterRoomIcon} alt="entrar na sala" />
+              <button onClick={enterRoom}>Entrar na Sala</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
