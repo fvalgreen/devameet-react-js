@@ -5,6 +5,10 @@ import copyIcon from "../../assets/images/copy.svg";
 import { RoomObjects } from "./RoomObjects";
 import { RoomServices } from "../../services/RoomServices";
 import { createPeerConnectionContext } from "../../services/WebSocketServices";
+import arrowUpIcon from "../../assets/images/arrowUpMove.svg";
+import arrowLeftIcon from "../../assets/images/arrowLeftMove.svg";
+import arrowRightIcon from "../../assets/images/arrowRightMove.svg";
+import arrowDownIcon from "../../assets/images/arrowDownMove.svg";
 
 const roomServices = new RoomServices();
 const wsServices = createPeerConnectionContext();
@@ -21,8 +25,17 @@ export const RoomHome = () => {
 
   const userId = localStorage.getItem("id") || "";
 
+  const mobile = window.innerWidth <= 992;
+
   useEffect(() => {
     getRoom();
+  }, []);
+  useEffect(() => {
+    document.addEventListener('keyup', (event: any) => doMovement(event));
+
+    return () => {
+      document.removeEventListener('keyup', (event: any) => doMovement(event));
+    }
   }, []);
 
   const getRoom = async () => {
@@ -70,16 +83,94 @@ export const RoomHome = () => {
       }
     });
     wsServices.onRemoveUser((socketId: any) => {
-      const connectedStr = localStorage.getItem('connectedUsers') || '';
+      const connectedStr = localStorage.getItem("connectedUsers") || "";
       const connectedUsers = JSON.parse(connectedStr);
 
-      const filtered = connectedUsers?.filter((u: any) => u.clientId !== socketId);
+      const filtered = connectedUsers?.filter(
+        (u: any) => u.clientId !== socketId
+      );
       setConnectedUsers(filtered);
-    })
+    });
   };
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
+  };
+
+  const toggleMute = () => {
+    const payload = {
+      userId,
+      link,
+      muted: !me.muted,
+    };
+
+    wsServices.updateUserMute(payload);
+  };
+
+  const doMovement = (event: any) => {
+    const meStr = localStorage.getItem("me") || "";
+    const user = JSON.parse(meStr);
+
+    if (event && user) {
+      const payload = {
+        userId,
+        link,
+      } as any;
+
+      switch (event.key) {
+        case "ArrowUp": {
+          payload.x = user.x;
+          payload.orientation = "back";
+          if (user.orientation === "back") {
+            payload.y = user.y > 1 ? user.y - 1 : 1;
+          } else {
+            payload.y = user.y;
+          }
+          break;
+        }
+
+        case "ArrowDown": {
+          payload.x = user.x;
+          payload.orientation = "front";
+          if (user.orientation === "front") {
+            payload.y = user.y < 7 ? user.y + 1 : 7;
+          } else {
+            payload.y = user.y;
+          }
+          break;
+        }
+
+        case "ArrowLeft": {
+          payload.y = user.y;
+          payload.orientation = "left";
+          if (user.orientation === "left") {
+            payload.x = user.x > 0 ? user.x - 1 : 0;
+          } else {
+            payload.x = user.x;
+          }
+          break;
+        }
+
+        case "ArrowRight":
+          {
+            payload.y = user.y;
+            payload.orientation = "right";
+            if(user.orientation === "right"){
+              payload.x = user.x < 7 ? user.x + 1 : 7;
+            }else{
+              payload.x = user.x;
+            }
+            break;
+          }
+
+        default:
+          break;
+      }
+
+      if(payload.x >= 0 && payload.y >= 0 && payload.orientation){
+        wsServices.updateUserMovement(payload);
+      }
+    }
   };
 
   return (
@@ -101,7 +192,38 @@ export const RoomHome = () => {
               me={me}
               objects={objects}
               enterRoom={enterRoom}
+              toggleMute={toggleMute}
             />
+            {mobile && me?.user && (
+              <div className="movement">
+                <div
+                  className="button"
+                  onClick={() => doMovement({ key: "ArrowUp" })}
+                >
+                  <img src={arrowUpIcon} alt="andar para cima" />
+                </div>
+                <div className="line">
+                  <div
+                    className="button"
+                    onClick={() => doMovement({ key: "ArrowLeft" })}
+                  >
+                    <img src={arrowLeftIcon} alt="andar para esquerda" />
+                  </div>
+                  <div
+                    className="button"
+                    onClick={() => doMovement({ key: "ArrowDown" })}
+                  >
+                    <img src={arrowDownIcon} alt="andar para baixo" />
+                  </div>
+                  <div
+                    className="button"
+                    onClick={() => doMovement({ key: "ArrowRight" })}
+                  >
+                    <img src={arrowRightIcon} alt="andar para direita" />
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <div className="empty">

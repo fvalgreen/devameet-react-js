@@ -1,11 +1,16 @@
 import enterRoomIcon from "../../assets/images/enterRoom.svg";
 import { useState } from "react";
+import micOnIcon from '../../assets/images/micOn.svg';
+import micOffIcon from '../../assets/images/micOff.svg';
+
+
 
 type RoomObjectsProps = {
   objects: Array<any>;
   connectedUsers: Array<any>;
   me: any;
   enterRoom(): void;
+  toggleMute(): void;
 };
 
 export const RoomObjects: React.FC<RoomObjectsProps> = ({
@@ -13,6 +18,7 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({
   enterRoom,
   connectedUsers,
   me,
+  toggleMute
 }) => {
   const [objectsWithWidth, setObjectsWithWidth] = useState<Array<any>>([]);
   const mobile = window.innerWidth <= 992;
@@ -170,6 +176,12 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({
     return "";
   };
 
+  const getMutedClass = (user: any) => {
+    if (user?.muted) {
+      return 'muted';
+    }
+    return "";
+  }
   return (
     <div className="container-grid">
       <div className="center">
@@ -187,8 +199,8 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({
               className={"user-avatar " + getClassFromObject(user)}
               key={user._id}
             >
-              <div>
-                <span>{getName(user)}</span>
+              <div className={getMutedClass(user)}>
+                <span className={getMutedClass(user)}>{getName(user)}</span>
               </div>
               <img
                 src={getImageFromObject(user, true)}
@@ -197,6 +209,14 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({
               />
             </div>
           ))}
+          {
+            (me?.user && me.muted) && 
+            <img src={micOffIcon} className="audio" onClick={toggleMute}/>
+          }
+          {
+            (me?.user && !me.muted) && 
+            <img src={micOnIcon} className="audio" onClick={toggleMute}/>
+          }
           {(!connectedUsers || connectedUsers?.length === 0) && (
             <div className="preview">
               <img src={enterRoomIcon} alt="entrar na sala" />
