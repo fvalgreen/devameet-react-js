@@ -7,10 +7,10 @@ import micOffIcon from '../../assets/images/micOff.svg';
 
 type RoomObjectsProps = {
   objects: Array<any>;
-  connectedUsers: Array<any>;
-  me: any;
+  connectedUsers?: Array<any>;
+  me?: any;
   enterRoom(): void;
-  toggleMute(): void;
+  toggleMute?(): void;
 };
 
 export const RoomObjects: React.FC<RoomObjectsProps> = ({
