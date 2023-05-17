@@ -66,11 +66,11 @@ export const RoomHome = () => {
       setObjects(newObjects);
 
       userMediaStream = await navigator?.mediaDevices?.getUserMedia({
-        //   video: {
-        //     width: {min: 640, ideal: 1280},
-        //     height: {min: 400, ideal: 1080},
-        //     aspectRatio: {ideal: 1.7777},
-        //   },
+        video: {
+          width: { min: 640, ideal: 1280 },
+          height: { min: 400, ideal: 1080 },
+          aspectRatio: { ideal: 1.7777 },
+        },
         audio: true,
       });
       if (document.getElementById("localVideoRef")) {
@@ -229,6 +229,28 @@ export const RoomHome = () => {
     return connectedUsers.filter((user: any) => user.user !== userId);
   };
 
+  const getName = (user: any) => {
+    if (user?.name) {
+      return user.name.split(" ")[0];
+    }
+    return "";
+  };
+
+  const getMutedClass = (user: any) => {
+    if (user?.muted) {
+      return "muted";
+    }
+    return "";
+  };
+
+  const moreThanThreeUsers = () => {
+    if (connectedUsers.length > 3) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <>
       <Modal
@@ -256,6 +278,51 @@ export const RoomHome = () => {
           {objects && objects.length > 0 ? (
             <>
               <div className="resume">
+                <div
+                  className={
+                    "streams " +
+                    (mobile ? "" : moreThanThreeUsers() ? "scroll" : "")
+                  }
+                >
+                  {getUsersWithoutMe()?.map((user: any) => (
+                    <>
+                      {mobile ? (
+                        <audio
+                          key={user.clientId}
+                          id={user.clientId}
+                          playsInline
+                          autoPlay
+                          muted={user?.muted}
+                        />
+                      ) : (
+                        <div className="otherUsersStreams">
+                          <div className={"name " + getMutedClass(user)}>
+                            <span className={getMutedClass(user)}>
+                              {getName(user)}
+                            </span>
+                          </div>
+                          <video
+                            key={user.clientId}
+                            id={user.clientId}
+                            playsInline
+                            autoPlay
+                            muted={user?.muted}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ))}
+                </div>
+                {mobile ? (
+                  <audio id="localVideoRef" playsInline autoPlay muted />
+                ) : (
+                  <div className="meStream">
+                    <div className={"name " + getMutedClass(me)}>
+                      <span className={getMutedClass(me)}>{getName(me)}</span>
+                    </div>
+                    <video id="localVideoRef" playsInline autoPlay muted />
+                  </div>
+                )}
                 <div onClick={copyLink}>
                   <span>
                     <strong>Reunião</strong> {link}
@@ -263,16 +330,6 @@ export const RoomHome = () => {
                   <img src={copyIcon} alt="Copie o link da sala" />
                 </div>
                 <p style={{ color: color }}>{name}</p>
-                <audio id="localVideoRef" playsInline autoPlay muted />
-                {getUsersWithoutMe()?.map((user: any) => (
-                  <audio
-                    key={user.clientId}
-                    id={user.clientId}
-                    playsInline
-                    autoPlay
-                    muted={user?.muted}
-                  />
-                ))}
               </div>
               <RoomObjects
                 connectedUsers={connectedUsers}
