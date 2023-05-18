@@ -1,5 +1,5 @@
 import enterRoomIcon from "../../assets/images/enterRoom.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import micOnIcon from '../../assets/images/micOn.svg';
 import micOffIcon from '../../assets/images/micOff.svg';
 
@@ -20,6 +20,9 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({
   me,
   toggleMute
 }) => {
+  useEffect(() => {
+
+  }, [me])
   const [objectsWithWidth, setObjectsWithWidth] = useState<Array<any>>([]);
   const mobile = window.innerWidth <= 992;
 

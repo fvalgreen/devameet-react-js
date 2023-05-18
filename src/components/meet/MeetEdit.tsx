@@ -203,7 +203,6 @@ export const MeetEdit = () => {
     }
   }
 
-
   return (
     <div className="container-principal">
       <div className="container-meet">
