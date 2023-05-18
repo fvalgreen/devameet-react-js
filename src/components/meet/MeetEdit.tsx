@@ -55,6 +55,7 @@ export const MeetEdit = () => {
       });
       setObjects(newObjects);
     }
+    console.log(objects)
 
   }
 
@@ -201,6 +202,7 @@ export const MeetEdit = () => {
       }
     }
   }
+
   return (
     <div className="container-principal">
       <div className="container-meet">
