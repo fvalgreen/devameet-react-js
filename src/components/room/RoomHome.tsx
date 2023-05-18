@@ -303,15 +303,7 @@ export const RoomHome = () => {
       return "muted";
     }
     return "";
-  };
-
-  const moreThanThreeUsers = () => {
-    if (connectedUsers.length > 3) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  };  
 
   return (
     <>
@@ -341,10 +333,7 @@ export const RoomHome = () => {
             <>
               <div className="resume">
                 <div
-                  className={
-                    "streams " +
-                    (mobile ? "" : moreThanThreeUsers() ? "scroll" : "")
-                  }
+                  className="streams"
                 >
                   {getUsersWithoutMe()?.map((user: any) => (
                     <>

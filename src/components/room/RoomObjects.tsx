@@ -20,9 +20,6 @@ export const RoomObjects: React.FC<RoomObjectsProps> = ({
   me,
   toggleMute
 }) => {
-  useEffect(() => {
-
-  }, [me])
   const [objectsWithWidth, setObjectsWithWidth] = useState<Array<any>>([]);
   const mobile = window.innerWidth <= 992;
 
