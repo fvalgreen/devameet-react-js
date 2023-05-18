@@ -20,7 +20,7 @@ export const MeetHome = () => {
         <MeetUserHeader />
         <MeetList setObjects={setObjects} setLink={setLink}/>
       </div>
-      {objects?.length > 0 && <RoomObjects objects={objects} enterRoom={enterRoom}/>}
+      {objects?.length > 0 && <RoomObjects  objects={objects} enterRoom={enterRoom}/>}
     </div>
   );
 };

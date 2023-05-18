@@ -30,16 +30,19 @@ export const MeetObjectPicker: React.FC<MeetObjectPickerType> = ({
     }
   };
 
-  const selectObject = (object: string) => {
+  const selectObject = (object: any) => {
     const objectFinal = {
-      name: object,
+      name: object.name,
       x: asset.defaultXPosition,
       y: asset.defaultYPosition,
+      width: object.width,
+      height: object.height,
       zIndex: asset.defaultZIndex,
       orientation: asset.canRotate? 'front' : '',
       type: asset.path,
       flexStart: asset.flexStart,
-      selectMultiple: asset.selectMultiple
+      selectMultiple: asset.selectMultiple,
+      canWalkOver: asset.canWalkOver
     }
     setObject(objectFinal);
   }
@@ -53,7 +56,7 @@ export const MeetObjectPicker: React.FC<MeetObjectPickerType> = ({
       {show && (
         <div className="objects" >
           {asset?.objects?.map((object: any) => (
-            <div key={object} className={object === selected ? 'selected' : ''} onClick={() => selectObject(object)}>
+            <div key={object.name} className={object.name === selected ? 'selected' : ''} onClick={() => selectObject(object)}>
               <img
                 className={
                   "object " +
@@ -63,7 +66,7 @@ export const MeetObjectPicker: React.FC<MeetObjectPickerType> = ({
                     ? "larger"
                     : "")
                 }
-                src={getImageFromObject(object)}
+                src={getImageFromObject(object.name)}
               />
               <img className="add" src={plusCircleIcon} />
             </div>

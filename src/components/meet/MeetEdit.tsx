@@ -201,9 +201,6 @@ export const MeetEdit = () => {
       }
     }
   }
-
-  console.log(objects)
-
   return (
     <div className="container-principal">
       <div className="container-meet">

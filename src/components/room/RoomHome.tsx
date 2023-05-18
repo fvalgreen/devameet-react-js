@@ -24,6 +24,7 @@ export const RoomHome = () => {
   const [color, setColor] = useState("");
   const [name, setName] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [cantWalk, setCantWalk] = useState<any>([]);
 
   const { link } = useParams();
 
@@ -40,7 +41,7 @@ export const RoomHome = () => {
     return () => {
       document.removeEventListener("keyup", (event: any) => doMovement(event));
     };
-  }, []);
+  }, [cantWalk]);
 
   const getRoom = async () => {
     try {
@@ -80,6 +81,30 @@ export const RoomHome = () => {
     } catch (error) {
       console.log("Ocorreu erro ao buscar dados da sala: ", error);
     }
+  };
+
+  const cantWalkOver = () => {
+    let coordinates: any[] = [];
+
+    objects.map((o: any) => {
+      if (o.canWalkOver === false) {
+        let width = o.width;
+        let height = o.height;
+
+        let y = o.y;
+        let x = o.x;
+        for (width; width > 0; width--) {
+          for (height; height > 0; height--) {
+            coordinates.push([x, y]);
+            y++;
+          }
+          y = o.y;
+          height = o.height;
+          x++;
+        }
+      }
+    });
+    setCantWalk([coordinates]);
   };
 
   const enterRoom = () => {
@@ -144,6 +169,7 @@ export const RoomHome = () => {
     });
 
     wsServices.onAnswerMade((socket: any) => wsServices.callUser(socket));
+    cantWalkOver();
   };
 
   const copyLink = () => {
@@ -164,6 +190,7 @@ export const RoomHome = () => {
     const meStr = localStorage.getItem("me") || "";
     const user = JSON.parse(meStr);
 
+
     if (event && user) {
       const payload = {
         userId,
@@ -171,29 +198,47 @@ export const RoomHome = () => {
       } as any;
 
       switch (event.key) {
-        case "ArrowUp": {
-          payload.x = user.x;
-          payload.orientation = "back";
-          if (user.orientation === "back") {
-            payload.y = user.y > 1 ? user.y - 1 : 1;
-          } else {
-            payload.y = user.y;
-          }
-          break;
+        case "ArrowUp": {  
+          if(cantWalk[0]){
+              payload.x = user.x;
+              payload.orientation = "back";
+              if (user.orientation === "back") {
+                payload.y = user.y > 1 ? user.y - 1 : 1;
+              } else {
+                payload.y = user.y;
+              }
+              cantWalk[0].map(((o: any) => {
+                if(o[0] === payload.x && o[1] === payload.y){
+                  payload.x = user.x;
+                  payload.y = user.y
+                }
+              }))
+            }
+            break;
+          
         }
 
         case "ArrowDown": {
-          payload.x = user.x;
-          payload.orientation = "front";
-          if (user.orientation === "front") {
-            payload.y = user.y < 7 ? user.y + 1 : 7;
-          } else {
-            payload.y = user.y;
+          if(cantWalk[0]){
+            payload.x = user.x;
+            payload.orientation = "front";
+            if (user.orientation === "front") {
+              payload.y = user.y < 7 ? user.y + 1 : 7;
+            } else {
+              payload.y = user.y;
+            }
+            cantWalk[0].map(((o: any) => {
+              if(o[0] === payload.x && o[1] === payload.y){
+                payload.x = user.x;
+                payload.y = user.y
+              }
+            }))
           }
           break;
         }
 
         case "ArrowLeft": {
+          if(cantWalk[0]){
           payload.y = user.y;
           payload.orientation = "left";
           if (user.orientation === "left") {
@@ -201,17 +246,34 @@ export const RoomHome = () => {
           } else {
             payload.x = user.x;
           }
+          console.log(cantWalk[0])
+            cantWalk[0].map(((o: any) => {
+              if(o[0] === payload.x && o[1] === payload.y){
+                payload.x = user.x;
+                payload.y = user.y
+              }
+            }))
+          }
           break;
         }
 
         case "ArrowRight": {
           payload.y = user.y;
+          if(cantWalk[0]){
           payload.orientation = "right";
           if (user.orientation === "right") {
             payload.x = user.x < 7 ? user.x + 1 : 7;
           } else {
             payload.x = user.x;
           }
+            cantWalk[0].map(((o: any) => {
+              if(o[0] === payload.x && o[1] === payload.y){
+                payload.x = user.x;
+                payload.y = user.y
+              }
+            }))
+          }
+          
           break;
         }
 
