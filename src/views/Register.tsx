@@ -3,7 +3,7 @@ import mail from "../assets/images/mail.svg";
 import key from "../assets/images/key.svg";
 import user from "../assets/images/user.svg";
 import { PublicInput } from "../components/general/PublicInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RegisterService } from "../services/RegisterService";
 import { Link, useNavigate } from "react-router-dom";
 import { AvatarInput } from "../components/general/AvatarInput";
