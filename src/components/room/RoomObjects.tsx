@@ -1,5 +1,5 @@
 import enterRoomIcon from "../../assets/images/enterRoom.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import micOnIcon from '../../assets/images/micOn.svg';
 import micOffIcon from '../../assets/images/micOff.svg';
 
